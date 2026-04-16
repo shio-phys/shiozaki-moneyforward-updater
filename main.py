@@ -52,13 +52,22 @@ def bulk_update(page) -> None:
     print("更新リクエスト送信完了")
 
 
-def main() -> None:
+def load_credentials() -> list:
+    # 環境変数 PASSKEY_CREDENTIALS があればそちらを優先（Cloud Run用）
+    env_creds = os.environ.get("PASSKEY_CREDENTIALS")
+    if env_creds:
+        return json.loads(env_creds)
+
     if not os.path.exists(CREDENTIALS_FILE):
         print(f"エラー: {CREDENTIALS_FILE} が見つかりません。先に uv run register.py を実行してください", file=sys.stderr)
         sys.exit(1)
 
     with open(CREDENTIALS_FILE) as f:
-        credentials = json.load(f)
+        return json.load(f)
+
+
+def main() -> None:
+    credentials = load_credentials()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
