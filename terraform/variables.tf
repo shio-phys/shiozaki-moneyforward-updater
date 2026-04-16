@@ -13,5 +13,5 @@ variable "image_tag" {
 
 variable "schedule" {
   description = "Cloud Scheduler の cron 式 (JST)"
-  default     = "0 6 * * *" # 毎日朝6時（JST）
+  default     = "0 * * * *" # 毎時0分
 }
