@@ -1,13 +1,9 @@
 import json
 import os
 import sys
-from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
-load_dotenv()
-
 MF_URL = "https://moneyforward.com"
-LOGIN_URL = "https://id.moneyforward.com/sign_in"
 CREDENTIALS_FILE = "passkey_credentials.json"
 
 
