@@ -7,7 +7,7 @@ resource "google_cloud_run_v2_job" "app" {
     template {
       service_account = google_service_account.runner.email
       timeout         = "1800s"
-      max_retries     = 1
+      max_retries     = 0
 
       containers {
         image = local.image_full

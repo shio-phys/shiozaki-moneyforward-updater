@@ -66,9 +66,10 @@ def load_credentials() -> list:
         return json.load(f)
 
 
-def main() -> None:
-    credentials = load_credentials()
+MAX_RETRIES = 2
 
+
+def run_once(credentials: list) -> None:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(
@@ -86,13 +87,22 @@ def main() -> None:
         try:
             login_with_passkey(page)
             bulk_update(page)
-        except PlaywrightTimeoutError as e:
-            print(f"タイムアウトエラー: {e}", file=sys.stderr)
-            page.screenshot(path="error.png")
-            print("スクリーンショットを error.png に保存しました")
-            sys.exit(1)
         finally:
             browser.close()
+
+
+def main() -> None:
+    credentials = load_credentials()
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            run_once(credentials)
+            return
+        except PlaywrightTimeoutError as e:
+            print(f"タイムアウトエラー (試行 {attempt}/{MAX_RETRIES}): {e}", file=sys.stderr)
+            if attempt == MAX_RETRIES:
+                sys.exit(1)
+            print("リトライします...")
 
 
 if __name__ == "__main__":
