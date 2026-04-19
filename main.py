@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import time
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 MF_URL = "https://moneyforward.com"
@@ -33,8 +34,8 @@ def setup_virtual_authenticator(cdp, credentials: list) -> str:
 
 def login_with_passkey(page) -> None:
     # /accounts にアクセスすると仮想認証器が自動でパスキー認証して直接着地する
-    page.goto(f"{MF_URL}/accounts")
-    page.wait_for_load_state("networkidle", timeout=15000)
+    page.goto(f"{MF_URL}/accounts", timeout=60000)
+    page.wait_for_load_state("networkidle", timeout=30000)
 
     if not page.url.startswith(MF_URL):
         raise RuntimeError(f"ログイン失敗: {page.url}")
@@ -102,7 +103,8 @@ def main() -> None:
             print(f"タイムアウトエラー (試行 {attempt}/{MAX_RETRIES}): {e}", file=sys.stderr)
             if attempt == MAX_RETRIES:
                 sys.exit(1)
-            print("リトライします...")
+            print("30秒待機してリトライします...")
+            time.sleep(30)
 
 
 if __name__ == "__main__":
