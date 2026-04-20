@@ -29,11 +29,11 @@ resource "google_monitoring_alert_policy" "job_failed" {
     condition_threshold {
       filter          = "resource.type=\"cloud_run_job\" AND metric.type=\"logging.googleapis.com/user/${google_logging_metric.job_failed.name}\""
       comparison      = "COMPARISON_GT"
-      threshold_value = 0
+      threshold_value = 2
       duration        = "0s"
 
       aggregations {
-        alignment_period   = "300s"
+        alignment_period   = "10800s"
         per_series_aligner = "ALIGN_SUM"
       }
     }
