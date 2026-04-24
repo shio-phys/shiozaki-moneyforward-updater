@@ -67,7 +67,7 @@ def load_credentials() -> list:
         return json.load(f)
 
 
-MAX_RETRIES = 2
+MAX_RETRIES = 3
 
 
 def run_once(credentials: list) -> None:
@@ -103,8 +103,8 @@ def main() -> None:
             print(f"タイムアウトエラー (試行 {attempt}/{MAX_RETRIES}): {e}", file=sys.stderr)
             if attempt == MAX_RETRIES:
                 sys.exit(1)
-            print("30秒待機してリトライします...")
-            time.sleep(30)
+            print("60秒待機してリトライします...")
+            time.sleep(60)
 
 
 if __name__ == "__main__":
